@@ -1,37 +1,47 @@
 from bs4 import BeautifulSoup
+from selenium import webdriver
 import requests
-import pandas
+import urllib.parse
+import pandas as pd
 
-'''HTTP Request'''
-# store website in variable
-website = 'https://www.remax.ro/vanzare/case/cluj?transactionType=vanzare'
-# get request
-response = requests.get(website)
+# Initialize the WebDriver (you can change 'chromedriver' to your WebDriver's filename)
+driver = webdriver.Chrome()
+driver.get('https://www.trulia.com/CA/San_Francisco/')
 
-print(f"The respone code: {response.status_code}")
+html_content = driver.page_source
 
+soup = BeautifulSoup(html_content, 'html.parser')
+print(soup.text)
 
-'''Soap object'''
+"""results"""
+result_container = soup.find_all('li', {'class': 'sc-fc01d244-0'})
+print(len(result_container))  # 42 results
 
-soup = BeautifulSoup(response.content, features='html.parser')
-# print(soup)
+"""Update Results"""
+# I just want to target the elements which have the attreibute 'data-testid'
+results_up = []
+for r in result_container:
+    if r.has_attr('data-testid'):
+        results_up.append(r)
+print(len(results_up))  # 40 results
 
-update_result = str()
-# result
-result_container = soup.find_all('div', {'class': 'col-xs-24 col-sm-12 col-md-12 col-lg-8'})
-print(len(result_container))
+"""Concatenate 2 URL Parts to get absolute URL"""
+# URL first part
+url_part_1 = 'https://www.trulia.com'
 
-
-
-
-'''Concatenate 2 URL Parts to get absolute url'''
-url_part_1 = 'https://www.remax.ro/vanzare/case/cluj'
-
+# Create list for URL second part
 url_part_2 = []
+for item in results_up:
+    for link in item.find_all('div', {'data-testid': 'property-card-details'}):
+        url_part_2.append(link.find('a').get('href'))
+print(len(url_part_2))
 
-for item in update_result:
-    for link in item.find('div', {'class': 'relative-position-image'}):
-        url_part_2.append(link.find['a'].get['href'])
+# join first and second URL
+url_join = []
+for link_2 in url_part_2:
+    url_join.append(urllib.parse.urljoin(url_part_1, link_2))
+print(url_join)
 
-print(url_part_2)
+driver.quit()
 
+# %%
