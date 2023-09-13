@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="int.find" />
+          <option value="list.apply" />
         </list>
       </option>
     </inspection_tool>
