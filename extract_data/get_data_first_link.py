@@ -1,6 +1,8 @@
 """Get data : Address, bedrooms, sqft, year build ..."""
 from bs4 import BeautifulSoup
 from selenium import webdriver
+import requests
+from initial_step import url_join
 
 # store first link avaliable
 driver = webdriver.Chrome()
@@ -40,5 +42,67 @@ result_price = soup1.find('h3', {'data-testid': 'on-market-price-details'}).get_
 print(result_price)
 
 driver.quit()
+
+# empty lists
+address = []
+bedrooms = []
+bathrooms = []
+area = []
+year_built = []
+parking = []
+price = []
+
+# loop through all joined links
+for link in url_join:
+    response = requests.get(link)
+
+    # create soup object
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # address
+    try:
+        address.append(soup.find('span', {'data-testid': 'home-details-summary-headline'}).get_text())
+    except:
+        address.append('')
+
+    # bedrooms
+    try:
+        bedrooms.append(soup.find('li', {'data-testid': 'bed'}).get_text())
+    except:
+        bedrooms.append('')
+
+    # bathrooms
+    try:
+        bathrooms.append(soup.find('li', {'data-testid': 'bath'}).get_text())
+    except:
+        bathrooms.append('')
+
+    # area
+    try:
+        area.append(soup.find('li', {'data-testid': 'floor'}).get_text())
+    except:
+        area.append('')
+
+    # year_built
+    try:
+        year_built.append(soup.find('div', string='Year Built').findNext('div').get_text())
+    except:
+        year_built.append('')
+
+    # parking
+    try:
+        parking.append(soup.find('div', string='Parking').findNext('div').get_text())
+    except:
+        parking.append('')
+
+    # price
+    try:
+        price.append(soup.find('h3', {'data-testid': 'on-market-price-details'}).get_text())
+    except:
+        price.append('')
+
+    # create a dictionary with results
+    output = {'Address': address, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms, 'Area': area,
+              'Year Built': year_built, 'Parking': parking, 'Price': price}
 
 # %%

@@ -1,8 +1,14 @@
+"""Python script that uses BeautifulSoup and Selenium to scrape data from a real estate website (Trulia)
+in San Francisco."""
+# """Beautiful Soup creates a parse tree from the page's source code, which you can then
+# search and manipulate to extract the data you need."""
 from bs4 import BeautifulSoup
+
+# """The selenium library in Python is a powerful tool for automating web browsers."""
 from selenium import webdriver
-import requests
+
+# """This module is particularly useful when working with web requests and handling URLs. """
 import urllib.parse
-import pandas as pd
 
 # Initialize the WebDriver (you can change 'chromedriver' to your WebDriver's filename)
 driver = webdriver.Chrome()
@@ -10,6 +16,7 @@ driver.get('https://www.trulia.com/CA/San_Francisco/')
 
 html_content = driver.page_source
 
+# Parse the HTML content using BeautifulSoup and print the text representation of the parsed HTML.
 soup = BeautifulSoup(html_content, 'html.parser')
 print(soup.text)
 
